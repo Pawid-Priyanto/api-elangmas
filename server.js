@@ -169,5 +169,12 @@ app.delete('/api/pemain/:id', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, '0.0.0.0', () => console.log(`Backend SSB running on port ${PORT}`));
+// Tambahkan route testing untuk memastikan api jalan
+app.get('/', (req, res) => res.send('SSB Elang Mas API is Running!'));
+// app.listen(PORT, '0.0.0.0', () => console.log(`Backend SSB running on port ${PORT}`));
+
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`Server jalan di port ${PORT}`));
+}
 
