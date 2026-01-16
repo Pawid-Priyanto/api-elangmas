@@ -6,7 +6,10 @@ import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
-dotenv.config();
+// Hanya muat dotenv jika tidak di production (Vercel)
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 const app = express();
 app.use(cors());
 app.use(express.json());
