@@ -1,0 +1,23 @@
+meta {
+  name: add pemain
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:5000/api/pemain
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJFUzI1NiIsImtpZCI6ImY2OTBhMzAyLTFmM2ItNGY3OS04NDhkLWUzMjUyN2YyMjAzNiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3Zja2lodGFsdWt3bW9qbWNpdXJmLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIyYmFlYTc5ZC02YTE2LTRmMTMtODNhZi1iYjMxZTM5YjJiMmYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzY4NTYyMzQ0LCJpYXQiOjE3Njg1NTg3NDQsImVtYWlsIjoicGF3aXRhbnRvMjdAZ21haWwuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3Njg1NTg3NDR9XSwic2Vzc2lvbl9pZCI6ImRmYjk0YTljLWFmMmYtNDg4NS1iYzA2LTMzYzU0OTcyMmYyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.SCn-RGNTTIb1u8LYSTyZpy7AG2U4vDSb4AAB7L93hdqW6iUtj-ZWVYFcMl5N9s_XIxRMztXhPp98051azV1ziQ
+}
+
+body:multipart-form {
+  nama: adry
+  posisi : sayap
+  minutes_play: 10
+  tanggal_lahir: 10-08-2010
+  ~foto_url: @file(/Users/pawitpriyanto/Downloads/logo.jpeg) @contentType(file)
+}
