@@ -84,6 +84,11 @@ const storage = new CloudinaryStorage({
     folder: 'ssb_uploads',
     allowed_formats: ['jpg', 'png', 'jpeg'],
   },
+  transformation: [
+      { width: 1000, crop: 'limit' }, // Membatasi lebar maksimal 1000px agar tidak terlalu besar
+      { quality: 'auto' },            // Mengompres kualitas secara otomatis (AI Cloudinary)
+      { fetch_format: 'auto' }         // Mengubah format ke yang paling ringan (misal WebP/Avif)
+    ],
 });
 
 const upload = multer({ storage: storage });
@@ -164,5 +169,5 @@ app.delete('/api/pemain/:id', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Backend SSB running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`Backend SSB running on port ${PORT}`));
 
