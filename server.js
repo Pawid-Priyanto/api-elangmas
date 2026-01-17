@@ -115,7 +115,7 @@ app.post('/api/pemain', upload.single('foto_url'), async (req, res) => {
 });
 
 // GET: Fetch Pemain dengan Pagination & Search
-app.get('/pemain', async (req, res) => {
+app.get('/api/pemain', async (req, res) => {
   try {
     // 1. Ambil query params dari frontend
     // page: halaman ke berapa (mulai dari 1)
