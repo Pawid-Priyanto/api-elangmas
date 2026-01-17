@@ -194,6 +194,35 @@ app.post('/api/pelatih', upload.single('foto_url'), async (req, res) => {
 });
 
 app.get('/api/pelatih', async (req, res) => {
+  try {
+    const {page = 1, pageSize= 10, nama = ""} = req.query;
+
+    // hitung range untuk supabase (0-based index)
+    const from = (page-1) * pageSize;
+    const to = from + pageSize - 1;
+
+    let query = supabase.from('pelatih').select('*', {count: 'exact'})
+
+    if(nama){
+      query = query.ilike('nama', `%${nama}%`)
+    }
+
+    const {data, count, error} = await query.order('created_at', {ascending: false}).range(from,to)
+
+    res.json({
+      success: true,
+      data: data,
+      totalData: count,
+      currentPage: parseInt(page),
+      totalPages: parseInt(pageSize),
+      totalPages: Match.ceil(count / pageSize)
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
   const { data, error } = await supabase.from('pelatih').select('*');
   if (error) return res.status(500).json(error);
   res.json(data);
@@ -213,10 +242,35 @@ app.post('/api/jadwal', upload.single('foto_url'), async (req, res) => {
 });
 
 app.get('/api/jadwal', async (req, res) => {
-  const { data, error } = await supabase.from('jadwal_pertandingan').select('*').order('tanggal', { ascending: true });
-  if (error) return res.status(500).json(error);
-  res.json(data);
+  try {
+    const { lawan = '' } = req.query;
+
+    // Inisialisasi query
+    let query = supabase
+      .from('jadwal_pertandingan')
+      .select('*');
+
+    // Filter: Cari berdasarkan nama lawan (case-insensitive)
+    if (lawan) {
+      query = query.ilike('lawan', `%${lawan}%`);
+    }
+
+    // Urutkan berdasarkan tanggal terdekat
+    const { data, error } = await query.order('tanggal', { ascending: true });
+
+    if (error) throw error;
+    
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
+
+// app.get('/api/jadwal', async (req, res) => {
+//   const { data, error } = await supabase.from('jadwal_pertandingan').select('*').order('tanggal', { ascending: true });
+//   if (error) return res.status(500).json(error);
+//   res.json(data);
+// });
 
 // --- DELETE DATA (CONTOH PEMAIN) ---
 app.delete('/api/pemain/:id', async (req, res) => {
