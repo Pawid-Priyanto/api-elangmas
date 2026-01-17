@@ -171,6 +171,22 @@ app.delete('/api/pemain/:id', async (req, res) => {
   res.json({ message: 'Data pemain berhasil dihapus' });
 });
 
+// --- DELETE DATA (CONTOH PEMAIN) ---
+app.delete('/api/pelatih/:id', async (req, res) => {
+  const { id } = req.params;
+  const { error } = await supabase.from('pelatih').delete().eq('id', id);
+  if (error) return res.status(500).json(error);
+  res.json({ message: 'Data pemain berhasil dihapus' });
+});
+
+// --- DELETE DATA (CONTOH PEMAIN) ---
+app.delete('/api/jadwal/:id', async (req, res) => {
+  const { id } = req.params;
+  const { error } = await supabase.from('jadwal').delete().eq('id', id);
+  if (error) return res.status(500).json(error);
+  res.json({ message: 'Data pemain berhasil dihapus' });
+});
+
 const PORT = process.env.PORT || 5000;
 // Tambahkan route testing untuk memastikan api jalan
 app.get('/', (req, res) => res.send('SSB Elang Mas API is Running!'));
