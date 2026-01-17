@@ -182,9 +182,91 @@ app.delete('/api/pelatih/:id', async (req, res) => {
 // --- DELETE DATA (CONTOH PEMAIN) ---
 app.delete('/api/jadwal/:id', async (req, res) => {
   const { id } = req.params;
-  const { error } = await supabase.from('jadwal').delete().eq('id', id);
+  const { error } = await supabase.from('jadwal_pertandingan').delete().eq('id', id);
   if (error) return res.status(500).json(error);
   res.json({ message: 'Data pemain berhasil dihapus' });
+});
+
+// --- EDIT PEMAIN --- //
+
+// PUT: Update Pemain
+app.put('/pemain/:id', upload.single('foto_url'), async (req, res) => {
+  const { id } = req.params;
+  const { nama, posisi, tanggal_lahir, minutes_play } = req.body;
+
+  try {
+    let updateData = { nama, posisi, tanggal_lahir, minutes_play };
+
+    // Jika admin mengupload foto baru
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'ssb_elangmas/pemain',
+      });
+      updateData.foto_url = result.secure_url;
+    }
+
+    const { data, error } = await supabase
+      .from('pemain')
+      .update(updateData)
+      .eq('id', id)
+      .select();
+
+    if (error) throw error;
+    res.json({ message: "Data pemain berhasil diperbarui", data });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// --- EDIT PELATIH --- //
+
+// PUT: Update Pelatih
+app.put('/pelatih/:id', upload.single('foto_url'), async (req, res) => {
+  const { id } = req.params;
+  const { nama, lisensi } = req.body;
+
+  try {
+    let updateData = { nama, lisensi };
+
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'ssb_elangmas/pelatih',
+      });
+      updateData.foto_url = result.secure_url;
+    }
+
+    const { data, error } = await supabase
+      .from('pelatih')
+      .update(updateData)
+      .eq('id', id)
+      .select();
+
+    if (error) throw error;
+    res.json({ message: "Data pelatih berhasil diperbarui", data });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// --- EDIT JADWAL --- //
+
+// PUT: Update Jadwal
+app.put('/jadwal/:id', async (req, res) => {
+  const { id } = req.params;
+  const { lawan, tanggal, jam, lokasi, tipe_pertandingan } = req.body;
+
+  try {
+    const { data, error } = await supabase
+      .from('jadwal_pertandingan')
+      .update({ lawan, tanggal, jam, lokasi, tipe_pertandingan })
+      .eq('id', id)
+      .select();
+
+    if (error) throw error;
+    res.json({ message: "Jadwal berhasil diperbarui", data });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 const PORT = process.env.PORT || 5000;
