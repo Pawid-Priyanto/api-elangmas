@@ -114,11 +114,66 @@ app.post('/api/pemain', upload.single('foto_url'), async (req, res) => {
   }
 });
 
-app.get('/api/pemain', async (req, res) => {
-  const { data, error } = await supabase.from('pemain').select('*').order('created_at', { ascending: false });
-  if (error) return res.status(500).json(error);
-  res.json(data);
+// GET: Fetch Pemain dengan Pagination & Search
+app.get('/pemain', async (req, res) => {
+  try {
+    // 1. Ambil query params dari frontend
+    // page: halaman ke berapa (mulai dari 1)
+    // pageSize: jumlah data per halaman
+    // nama: pencarian nama (string)
+    // tanggal: pencarian tanggal lahir (YYYY-MM-DD)
+    const { page = 1, pageSize = 10, nama = '', tanggal = '' } = req.query;
+
+    // 2. Hitung range untuk Supabase (0-based index)
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    // 3. Inisialisasi query ke tabel 'pemain'
+    // count: 'exact' digunakan untuk mendapatkan total baris data yang sesuai filter
+    let query = supabase
+      .from('pemain')
+      .select('*', { count: 'exact' });
+
+    // 4. Filter: Cari berdasarkan Nama (case-insensitive)
+    if (nama) {
+      query = query.ilike('nama', `%${nama}%`);
+    }
+
+    // 5. Filter: Cari berdasarkan Tanggal Lahir (exact match)
+    if (tanggal) {
+      query = query.eq('tanggal_lahir', tanggal);
+    }
+
+    // 6. Eksekusi query dengan Range (Pagination) dan Order
+    const { data, count, error } = await query
+      .order('created_at', { ascending: false }) // Urutkan dari yang terbaru
+      .range(from, to);
+
+    if (error) throw error;
+
+    // 7. Kirim response terstruktur
+    res.json({
+      success: true,
+      data: data,           // List pemain
+      totalData: count,     // Total data keseluruhan setelah difilter
+      currentPage: parseInt(page),
+      pageSize: parseInt(pageSize),
+      totalPages: Math.ceil(count / pageSize)
+    });
+
+  } catch (err) {
+    res.status(500).json({ 
+      success: false, 
+      message: err.message 
+    });
+  }
 });
+
+// app.get('/api/pemain', async (req, res) => {
+//   const { data, error } = await supabase.from('pemain').select('*').order('created_at', { ascending: false });
+//   if (error) return res.status(500).json(error);
+//   res.json(data);
+// });
 
 // --- CRUD PELATIH (DENGAN FOTO) ---
 app.post('/api/pelatih', upload.single('foto_url'), async (req, res) => {
