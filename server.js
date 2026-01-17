@@ -299,7 +299,7 @@ app.delete('/api/jadwal/:id', async (req, res) => {
 // --- EDIT PEMAIN --- //
 
 // PUT: Update Pemain
-app.put('/pemain/:id', upload.single('foto_url'), async (req, res) => {
+app.put('/api/pemain/:id', upload.single('foto_url'), async (req, res) => {
   const { id } = req.params;
   const { nama, posisi, tanggal_lahir, minutes_play } = req.body;
 
@@ -330,7 +330,7 @@ app.put('/pemain/:id', upload.single('foto_url'), async (req, res) => {
 // --- EDIT PELATIH --- //
 
 // PUT: Update Pelatih
-app.put('/pelatih/:id', upload.single('foto_url'), async (req, res) => {
+app.put('/api/pelatih/:id', upload.single('foto_url'), async (req, res) => {
   const { id } = req.params;
   const { nama, lisensi } = req.body;
 
@@ -360,7 +360,7 @@ app.put('/pelatih/:id', upload.single('foto_url'), async (req, res) => {
 // --- EDIT JADWAL --- //
 
 // PUT: Update Jadwal
-app.put('/jadwal/:id', async (req, res) => {
+app.put('/api/jadwal/:id', async (req, res) => {
   const { id } = req.params;
   const { lawan, tanggal, jam, lokasi, tipe_pertandingan } = req.body;
 
