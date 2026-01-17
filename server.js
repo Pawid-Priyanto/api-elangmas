@@ -246,12 +246,16 @@ app.post('/api/jadwal', upload.single('foto_url'), async (req, res) => {
 
 app.get('/api/jadwal', async (req, res) => {
   try {
-    const { lawan = '' } = req.query;
+    const { lawan = '', page = 1, pageSize = 10 } = req.query;
+
+    // hitung range untuk supabase (0-based index)
+    const from = (page-1) * pageSize;
+    const to = from + pageSize - 1;
 
     // Inisialisasi query
     let query = supabase
       .from('jadwal_pertandingan')
-      .select('*');
+      .select('*', {count: 'exact'});
 
     // Filter: Cari berdasarkan nama lawan (case-insensitive)
     if (lawan) {
@@ -259,7 +263,16 @@ app.get('/api/jadwal', async (req, res) => {
     }
 
     // Urutkan berdasarkan tanggal terdekat
-    const { data, error } = await query.order('tanggal', { ascending: true });
+    const { data, error, count } = await query.order('tanggal', { ascending: true }).range(from, to);
+
+     res.json({
+      success: true,
+      data: data,
+      totalData: count,
+      currentPage: parseInt(page),
+      totalPages: parseInt(pageSize),
+      totalPages: Math.ceil(count / pageSize)
+    })
 
     if (error) throw error;
     
