@@ -215,8 +215,11 @@ app.get('/api/pelatih', async (req, res) => {
       totalData: count,
       currentPage: parseInt(page),
       totalPages: parseInt(pageSize),
-      totalPages: Match.ceil(count / pageSize)
+      totalPages: Math.ceil(count / pageSize)
     })
+
+     if (error) throw error;
+
   } catch (error) {
     res.status(500).json({
       success: false,
