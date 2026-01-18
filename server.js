@@ -101,12 +101,12 @@ app.post('/api/pemain', upload.single('foto_url'), async (req, res) => {
   console.log("File dari Multer:", req.file); // CEK INI DI LOGS VERCEL
   console.log("Body dari Form:", req.body);
   try {
-    const { nama, posisi, tanggal_lahir, minutes_play } = req.body;
+    const { nama, posisi, tanggal_lahir, minutes_play, tempat_lahir, asal_sekolah, alamat } = req.body;
     const foto_url = req.file ? req.file.path : null;
 
     const { data, error } = await supabase
       .from('pemain')
-      .insert([{ nama, posisi, tanggal_lahir, foto_url, minutes_play: parseInt(minutes_play) || 0 }])
+      .insert([{ nama, posisi, tanggal_lahir, foto_url, tempat_lahir, asal_sekolah, alamat, minutes_play: parseInt(minutes_play) || 0 }])
       .select();
 
     if (error) throw error;
@@ -384,10 +384,10 @@ app.delete('/api/jadwal/:id', async (req, res) => {
 // PUT: Update Pemain
 app.put('/api/pemain/:id', upload.single('foto_url'), async (req, res) => {
   const { id } = req.params;
-  const { nama, posisi, tanggal_lahir, minutes_play } = req.body;
+  const { nama, posisi, tanggal_lahir, minutes_play, tempat_lahir, asal_sekolah, alamat } = req.body;
 
   try {
-    let updateData = { nama, posisi, tanggal_lahir, minutes_play };
+    let updateData = { nama, posisi, tanggal_lahir, minutes_play, tempat_lahir, asal_sekolah, alamat };
 
     // Jika admin mengupload foto baru
     if (req.file) {
