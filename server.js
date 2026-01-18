@@ -98,6 +98,8 @@ const upload = multer({ storage: storage });
 
 // --- CRUD PEMAIN (DENGAN FOTO) ---
 app.post('/api/pemain', upload.single('foto_url'), async (req, res) => {
+  console.log("File dari Multer:", req.file); // CEK INI DI LOGS VERCEL
+  console.log("Body dari Form:", req.body);
   try {
     const { nama, posisi, tanggal_lahir, minutes_play } = req.body;
     const foto_url = req.file ? req.file.path : null;
@@ -169,6 +171,71 @@ app.get('/api/pemain', async (req, res) => {
   }
 });
 
+// GET: Fetch Pemain Detail
+// GET: Detail Pemain berdasarkan ID
+app.get('/api/pemain/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const { data, error } = await supabase
+      .from('pemain')
+      .select('*')
+      .eq('id', id)
+      .single(); // .single() digunakan karena kita hanya ingin mengambil satu data
+
+    if (error) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Pemain tidak ditemukan' 
+      });
+    }
+
+    res.json({
+      success: true,
+      data: data
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error', 
+      error: err.message 
+    });
+  }
+});
+
+// GET: Fetch Pelatih Detail
+
+// GET: Detail Pemain berdasarkan ID
+app.get('/api/pelatih/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const { data, error } = await supabase
+      .from('pelatih')
+      .select('*')
+      .eq('id', id)
+      .single(); // .single() digunakan karena kita hanya ingin mengambil satu data
+
+    if (error) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Pemain tidak ditemukan' 
+      });
+    }
+
+    res.json({
+      success: true,
+      data: data
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error', 
+      error: err.message 
+    });
+  }
+});
+
 // app.get('/api/pemain', async (req, res) => {
 //   const { data, error } = await supabase.from('pemain').select('*').order('created_at', { ascending: false });
 //   if (error) return res.status(500).json(error);
@@ -226,9 +293,9 @@ app.get('/api/pelatih', async (req, res) => {
       message: error.message
     })
   }
-  const { data, error } = await supabase.from('pelatih').select('*');
-  if (error) return res.status(500).json(error);
-  res.json(data);
+  // const { data, error } = await supabase.from('pelatih').select('*');
+  // if (error) return res.status(500).json(error);
+  // res.json(data);
 });
 
 // --- CRUD JADWAL PERTANDINGAN (TANPA FOTO) ---
@@ -276,7 +343,7 @@ app.get('/api/jadwal', async (req, res) => {
 
     if (error) throw error;
     
-    res.json(data);
+    // res.json(data);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
